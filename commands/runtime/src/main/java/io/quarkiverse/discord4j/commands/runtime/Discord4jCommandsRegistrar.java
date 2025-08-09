@@ -55,12 +55,12 @@ public class Discord4jCommandsRegistrar {
         ApplicationService app = gateway.rest().getApplicationService();
 
         List<ApplicationCommandRequest> globalCommandRequests = convert(globalCommands, objectMapper);
-        String globalCommandsPath = config.globalCommands.path;
+        String globalCommandsPath = config.globalCommands().path;
 
         if (!globalCommandRequests.isEmpty()) {
             publishers.add(idMono.flatMapMany(id -> app.bulkOverwriteGlobalApplicationCommand(id, globalCommandRequests)));
 
-            if (config.globalCommands.deleteMissing) {
+            if (config.globalCommands().deleteMissing) {
                 publishers.add(idMono.flatMapMany(id -> app.getGlobalApplicationCommands(id)
                         .filter(filter(globalCommandRequests))
                         .delayUntil(command -> app.deleteGlobalApplicationCommand(id, command.id().asLong())))
@@ -71,7 +71,7 @@ public class Discord4jCommandsRegistrar {
         }
 
         for (Map.Entry<String, List<String>> entry : guildCommands.entrySet()) {
-            GuildCommandsConfig commandsConfig = config.guildCommands.get(entry.getKey());
+            GuildCommandsConfig commandsConfig = config.guildCommands().get(entry.getKey());
             String guildCommandsPath = commandsConfig.path.orElse(globalCommandsPath + '/' + entry.getKey());
 
             List<ApplicationCommandRequest> guildCommandRequests = convert(entry.getValue(), objectMapper);

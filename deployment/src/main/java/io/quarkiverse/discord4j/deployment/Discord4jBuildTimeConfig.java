@@ -1,22 +1,23 @@
 package io.quarkiverse.discord4j.deployment;
 
-import io.quarkus.runtime.annotations.ConfigItem;
-import io.quarkus.runtime.annotations.ConfigPhase;
-import io.quarkus.runtime.annotations.ConfigRoot;
+import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
+import io.smallrye.config.WithName;
 
-@ConfigRoot(name = "discord4j", phase = ConfigPhase.BUILD_TIME)
-public class Discord4jBuildTimeConfig {
+@ConfigMapping(prefix = "discord4j")
+public interface Discord4jBuildTimeConfig {
     /**
      * Whether a health check should be published for the Gateway clients managed by this extension if the
      * quarkus-smallrye-health extension is present
      */
-    @ConfigItem(name = "health.enabled", defaultValue = "true")
-    public boolean healthEnabled;
+    @WithName("health.enabled")
+    @WithDefault("true")
+    public boolean healthEnabled();
 
     /**
      * Whether metrics should be collected for the Gateway clients managed by this extension if the
      * quarkus-micrometer or quarkus-smallrye-metrics extension is present
      */
-    @ConfigItem(name = "metrics.enabled")
-    public boolean metricsEnabled;
+    @WithName("metrics.enabled")
+    public boolean metricsEnabled();
 }
